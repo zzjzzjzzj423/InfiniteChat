@@ -1,0 +1,27 @@
+package com.zj.InfiniteChat.authenticationservice.utils;
+
+import com.zj.InfiniteChat.authenticationservice.constants.Enum.KEY_ENUMS;
+import com.zj.InfiniteChat.authenticationservice.constants.Enum.TIME_OUT_ENUMS;
+import com.zj.InfiniteChat.authenticationservice.constants.LoginConstants;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Data;
+
+import java.time.Duration;
+import java.util.Date;
+
+public class JWTUtils {
+
+    private final static Duration expiration=Duration.ofHours(TIME_OUT_ENUMS.JWT_TIMEOUT.getTimeOut());
+
+    public static String generateJWT(long user_id){
+        Date expiryDate=new Date(System.currentTimeMillis()+expiration.toMillis());
+        return Jwts
+                .builder()
+                .setSubject(String.valueOf(user_id))
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, KEY_ENUMS.JWT_KEY_PAIRS.getValue())
+                .compact();
+    }
+}
