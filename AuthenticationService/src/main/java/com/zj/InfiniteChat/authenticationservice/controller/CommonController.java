@@ -3,7 +3,6 @@ package com.zj.InfiniteChat.authenticationservice.controller;
 
 import com.zj.InfiniteChat.authenticationservice.Data.Common.CommonRequest;
 import com.zj.InfiniteChat.authenticationservice.Data.Common.CommonResponse;
-import com.zj.InfiniteChat.authenticationservice.Data.Common.Upload.UploadResponse;
 import com.zj.InfiniteChat.authenticationservice.commom.Result;
 import com.zj.InfiniteChat.authenticationservice.service.CommonService;
 import jodd.net.HttpStatus;

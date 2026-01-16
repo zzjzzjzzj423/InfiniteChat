@@ -3,6 +3,8 @@ package com.zj.InfiniteChat.authenticationservice.utils;
 import com.zj.InfiniteChat.authenticationservice.constants.Enum.KEY_ENUMS;
 import com.zj.InfiniteChat.authenticationservice.constants.Enum.TIME_OUT_ENUMS;
 import com.zj.InfiniteChat.authenticationservice.constants.LoginConstants;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Data;
@@ -23,5 +25,19 @@ public class JWTUtils {
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, KEY_ENUMS.JWT_KEY_PAIRS.getValue())
                 .compact();
+    }
+
+
+    public static Claims parse(String token) throws JwtException {
+        if (token==null){
+            throw new JwtException("token 为空");
+        }
+
+        return Jwts.parser()
+                .setSigningKey(KEY_ENUMS.JWT_KEY_PAIRS.getValue())
+                .parseClaimsJws(token)
+                .getBody();
+
+
     }
 }

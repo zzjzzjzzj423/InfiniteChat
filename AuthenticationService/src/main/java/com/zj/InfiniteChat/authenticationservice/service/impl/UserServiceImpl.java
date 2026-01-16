@@ -4,7 +4,8 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zj.InfiniteChat.authenticationservice.Data.Common.Upload.UploadResponse;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Update.UpdateAvtarResponse;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Upload.UploadResponse;
 import com.zj.InfiniteChat.authenticationservice.Data.Login.LoginResponse;
 import com.zj.InfiniteChat.authenticationservice.Data.Register.RegisterRequest;
 import com.zj.InfiniteChat.authenticationservice.Data.Register.RegisterResponse;
@@ -132,6 +133,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
         return new UploadResponse().setUploadUrl(uploadUrl).setDownloadUrl(downloadUrl);
+    }
+
+    @Override
+    public UpdateAvtarResponse updateAvatar(String userid, String downloadUrl) {
+        LambdaQueryWrapper<User> lambdaQueryWrapper=new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getUserId,userid);
+        User selectedUser = this.selectOnlyOne(lambdaQueryWrapper);
+        if(selectedUser==null){
+            throw new UserException(ERROR_ENUMS.USER_NOT_EXIST);
+        }
+
+        selectedUser.setAvatar(downloadUrl);
+
+
+
+        return new UpdateAvtarResponse().setUserid(userid);
     }
 
     private boolean isRegister(String email){

@@ -1,8 +1,10 @@
 package com.zj.InfiniteChat.authenticationservice.controller;
 
 
-import com.zj.InfiniteChat.authenticationservice.Data.Common.Upload.UploadRequest;
-import com.zj.InfiniteChat.authenticationservice.Data.Common.Upload.UploadResponse;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Update.UpdateAvatarRequest;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Update.UpdateAvtarResponse;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Upload.UploadRequest;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Upload.UploadResponse;
 import com.zj.InfiniteChat.authenticationservice.Data.Login.LoginCodeRequest;
 import com.zj.InfiniteChat.authenticationservice.Data.Login.LoginRequest;
 import com.zj.InfiniteChat.authenticationservice.Data.Login.LoginResponse;
@@ -10,6 +12,8 @@ import com.zj.InfiniteChat.authenticationservice.Data.Register.RegisterRequest;
 import com.zj.InfiniteChat.authenticationservice.Data.Register.RegisterResponse;
 import com.zj.InfiniteChat.authenticationservice.commom.Result;
 import com.zj.InfiniteChat.authenticationservice.service.UserService;
+import com.zj.InfiniteChat.authenticationservice.utils.JWTUtils;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,13 +40,13 @@ public class UserController {
 
     }
 
-    @GetMapping("Login")
+    @GetMapping("/Login")
     public Result<LoginResponse> login(@RequestBody LoginRequest data){
         LoginResponse loginResponse=userService.login(data.getEmail(), data.getPassword());
         return Result.ok(loginResponse);
     }
 
-    @GetMapping("LoginByCode")
+    @GetMapping("/LoginByCode")
     public Result<LoginResponse> loginByCode(@RequestBody LoginCodeRequest data){
         LoginResponse loginResponse=userService.loginByCode(data.getEmail(), data.getCode());
         return Result.ok(loginResponse);
@@ -53,6 +57,22 @@ public class UserController {
 
         return Result.ok(uploadResponse);
     }
+
+    @PatchMapping("/updateAvatar")
+    public Result<UpdateAvtarResponse> updateAvatar(@Valid @RequestBody UpdateAvatarRequest updateAvatarRequest,
+                                               @RequestHeader String Authorization){
+
+        Claims userClaims= JWTUtils.parse(Authorization);
+        String userid=userClaims.getSubject();
+        UpdateAvtarResponse response=userService.updateAvatar(userid,updateAvatarRequest.getAvatarUrl());
+        return Result.ok(response);
+
+
+    }
+
+
+
+
 
 
 

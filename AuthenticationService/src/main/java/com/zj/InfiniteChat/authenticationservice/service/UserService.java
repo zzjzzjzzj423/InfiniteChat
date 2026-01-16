@@ -1,7 +1,8 @@
 package com.zj.InfiniteChat.authenticationservice.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.zj.InfiniteChat.authenticationservice.Data.Common.Upload.UploadResponse;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Update.UpdateAvtarResponse;
+import com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Upload.UploadResponse;
 import com.zj.InfiniteChat.authenticationservice.Data.Login.LoginResponse;
 import com.zj.InfiniteChat.authenticationservice.Data.Register.RegisterRequest;
 import com.zj.InfiniteChat.authenticationservice.Data.Register.RegisterResponse;
@@ -30,4 +31,6 @@ public interface UserService extends IService<User> {
     public LoginResponse loginByCode(String email, String code);
 
     public UploadResponse loadAvatar(String filename);
+
+    public UpdateAvtarResponse updateAvatar(String userid, String downloadUrl);
 }

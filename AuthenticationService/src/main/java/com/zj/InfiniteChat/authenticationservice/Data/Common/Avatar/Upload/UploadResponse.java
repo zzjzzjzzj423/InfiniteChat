@@ -1,4 +1,4 @@
-package com.zj.InfiniteChat.authenticationservice.Data.Common.Upload;
+package com.zj.InfiniteChat.authenticationservice.Data.Common.Avatar.Upload;
 
 
 import lombok.Data;

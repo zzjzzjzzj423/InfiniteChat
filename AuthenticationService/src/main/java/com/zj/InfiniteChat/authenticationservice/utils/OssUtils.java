@@ -19,7 +19,7 @@ public class OssUtils {
     @Resource
     private MinioClient minioClient;
 
-    @Value("{minio.url}")
+    @Value("${minio.url}")
     private String url;
 
     public String getDownloadUrl(String filename){
