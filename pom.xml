@@ -15,5 +15,8 @@
         <module>
             GateWay
         </module>
+        <module>
+            RealTimeCommunicationService
+        </module>
     </modules>
 </project>
