@@ -5,8 +5,8 @@ import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zj.infinitechat.messageingservice.common.ServiceException;
-import com.zj.infinitechat.messageingservice.conf.ConfigEnum;
-import com.zj.infinitechat.messageingservice.conf.SessionType;
+import com.zj.infinitechat.messageingservice.constants.ConfigEnum;
+import com.zj.infinitechat.messageingservice.constants.SessionType;
 import com.zj.infinitechat.messageingservice.constants.UserConstants;
 import com.zj.infinitechat.messageingservice.data.sendMsg.AppMessage;
 import com.zj.infinitechat.messageingservice.data.sendMsg.SendMsgRequest;
@@ -24,15 +24,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import static cn.hutool.core.date.DateUtil.formatDate;
 
 /**
 * @author Administrator

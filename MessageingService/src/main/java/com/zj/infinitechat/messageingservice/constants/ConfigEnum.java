@@ -1,4 +1,4 @@
-package com.zj.infinitechat.messageingservice.conf;
+package com.zj.infinitechat.messageingservice.constants;
 
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;

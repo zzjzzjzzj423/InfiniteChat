@@ -1,4 +1,4 @@
-package com.zj.infinitechat.messageingservice.conf;
+package com.zj.infinitechat.messageingservice.constants;
 
 public enum SessionType {
     SINGLE(1),
