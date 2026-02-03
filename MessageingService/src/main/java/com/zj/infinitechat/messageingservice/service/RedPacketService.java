@@ -12,6 +12,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface RedPacketService extends IService<RedPacket> {
 
-    public SendRedPacketResponse sendPacket(SendRedPacketRequest request);
+    SendRedPacketResponse sendPacket(SendRedPacketRequest request);
 
+
+
+    void handleExpiredRedPacket(Long redPacketId);
 }

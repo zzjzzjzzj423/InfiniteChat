@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zj.infinitechat.messageingservice.common.ServiceException;
 import com.zj.infinitechat.messageingservice.constants.BalanceLogType;
 import com.zj.infinitechat.messageingservice.constants.RedPacketConstants;
+import com.zj.infinitechat.messageingservice.constants.RedPacketStatus;
 import com.zj.infinitechat.messageingservice.data.RedPacket.Send.RedPacketMessageBody;
 import com.zj.infinitechat.messageingservice.data.RedPacket.Send.SendRedPacketRequest;
 import com.zj.infinitechat.messageingservice.data.RedPacket.Send.SendRedPacketResponse;
@@ -20,6 +21,7 @@ import com.zj.infinitechat.messageingservice.mapper.RedPacketMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,15 +43,11 @@ public class RedPacketServiceImpl extends ServiceImpl<RedPacketMapper, RedPacket
     @Autowired
     private UserBalanceService userBalanceService;
     @Autowired
-    private RedPacketService redPacketService;
-    @Autowired
     private MessageService messageService;
     @Autowired
     private BalanceLogService balanceLogService;
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
-
+    private StringRedisTemplate redisTemplate;
     @Transactional
     @Override
     public SendRedPacketResponse sendPacket(SendRedPacketRequest request) {
@@ -63,6 +61,48 @@ public class RedPacketServiceImpl extends ServiceImpl<RedPacketMapper, RedPacket
         saveInRedis(redPacket);
         return response;
     }
+
+    @Override
+    public void handleExpiredRedPacket(Long redPacketId) {
+        RedPacket redPacket = this.getById(redPacketId);
+        redPacket.setStatus(RedPacketStatus.EXPIRED.getStatus());
+        this.updateById(redPacket);
+        if(redPacket.getRemainingAmount().compareTo(new BigDecimal(0)) > 0){
+            backBalance(redPacket);
+
+        }
+
+    }
+
+
+    public void backBalance(RedPacket redPacket){
+        long senderId = redPacket.getSenderId();
+
+        UserBalance userBalance = userBalanceService.getById(senderId);
+
+        saveBalanceLog(senderId , redPacket.getRemainingAmount() , redPacket , BalanceLogType.REFUND_RED_PACKET.getType());
+
+        userBalance.setBalance(userBalance.getBalance().add(redPacket.getRemainingAmount()));
+
+        userBalanceService.updateById(userBalance);
+
+    }
+
+    private void saveBalanceLog(long userId , BigDecimal amount , RedPacket redPacket , Integer type){
+        Snowflake snowflake = IdUtil.getSnowflake(RedPacketConstants.WORKED_ID.getIntValue()
+                , RedPacketConstants.DATACENTER_ID.getIntValue());
+        long balanceLogId = snowflake.nextId();
+        BalanceLog log  = new BalanceLog();
+        Date date = new Date();
+        log.setBalanceLogId(balanceLogId)
+                .setUserId(userId)
+                .setAmount(amount)
+                .setType(type)
+                .setRelatedId(redPacket.getRedPacketId())
+                .setCreatedAt(date);
+        balanceLogService.save(log);
+    }
+
 
 
     private void validationRequestBody(SendRedPacketRequest.Body body) {
@@ -85,9 +125,9 @@ public class RedPacketServiceImpl extends ServiceImpl<RedPacketMapper, RedPacket
     }
 
     private BigDecimal checkUser(SendRedPacketRequest request) {
-        long receiveId = request.getReceiveUserId();
+        long sender = request.getSendUserId();
         LambdaQueryWrapper<UserBalance> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(UserBalance::getUserId, receiveId);
+        lambdaQueryWrapper.eq(UserBalance::getUserId, sender);
         UserBalance userBalance = userBalanceService.getOne(lambdaQueryWrapper);
         if (userBalance.getBalance().compareTo(request.getBody().getTotalAmount()) < 0) {
             throw new ServiceException("用户余额不足无法发送红包");
@@ -113,7 +153,7 @@ public class RedPacketServiceImpl extends ServiceImpl<RedPacketMapper, RedPacket
         redPacket.setStatus(1);
         Date date = new Date();
         redPacket.setCreatedAt(date);
-        redPacketService.save(redPacket);
+        this.save(redPacket);
         return redPacket;
     }
 
@@ -151,7 +191,7 @@ public class RedPacketServiceImpl extends ServiceImpl<RedPacketMapper, RedPacket
 
     private void saveInRedis(RedPacket redPacket){
         String key = RedPacketConstants.RED_PACKET_KEY_PREFIX.getValue() + redPacket.getRedPacketId();
-        redisTemplate.opsForValue().set(key , redPacket.getRemainingCount());
+        redisTemplate.opsForValue().set(key , String.valueOf(redPacket.getRemainingCount()));
     }
 }
 

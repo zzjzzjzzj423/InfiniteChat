@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 余额变动记录表
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 @TableName(value ="balance_log")
 @Data
+@Accessors(chain = true)
 public class BalanceLog {
     /**
      * 记录ID

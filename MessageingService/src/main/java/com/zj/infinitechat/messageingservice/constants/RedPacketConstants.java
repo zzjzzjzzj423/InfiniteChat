@@ -19,6 +19,7 @@ public enum RedPacketConstants {
                     "else " +
                     "    return tonumber(2) " + //明确返回数字
                     "end"),
+    USER_RED_PACKET_KEY_PREFIX("user_lock:"),
     RED_PACKET_TYPE_NORMAL("1"),
     RED_PACKET_TYPE_RANDOM("2"),
     WORKED_ID("1"),

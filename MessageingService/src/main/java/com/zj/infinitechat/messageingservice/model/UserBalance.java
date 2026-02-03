@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 用户余额表
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 @TableName(value ="user_balance")
 @Data
+@Accessors(chain = true)
 public class UserBalance {
     /**
      * 用户ID

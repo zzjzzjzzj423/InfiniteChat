@@ -7,11 +7,13 @@ import com.zj.infinitechat.messageingservice.model.RedPacket;
 import com.zj.infinitechat.messageingservice.model.RedPacketReceive;
 import com.zj.infinitechat.messageingservice.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class GetRedPacketService {
 
     @Autowired

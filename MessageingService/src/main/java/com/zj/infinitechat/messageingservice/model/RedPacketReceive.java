@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 红包领取记录表
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 @TableName(value ="red_packet_receive")
 @Data
+@Accessors(chain = true)
 public class RedPacketReceive {
     /**
      * 记录ID

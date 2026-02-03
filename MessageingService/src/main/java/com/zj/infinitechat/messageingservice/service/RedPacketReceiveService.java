@@ -1,5 +1,8 @@
 package com.zj.infinitechat.messageingservice.service;
 
+import com.zj.infinitechat.messageingservice.data.RedPacket.Receive.ReceiveRedPacketRequest;
+import com.zj.infinitechat.messageingservice.data.RedPacket.Receive.ReceiveRedPacketResponse;
+import com.zj.infinitechat.messageingservice.model.RedPacket;
 import com.zj.infinitechat.messageingservice.model.RedPacketReceive;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface RedPacketReceiveService extends IService<RedPacketReceive> {
 
+    ReceiveRedPacketResponse receiveRedPacket(ReceiveRedPacketRequest request);
+
+    public void backBalance(RedPacket redPacket);
 }
