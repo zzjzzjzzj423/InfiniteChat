@@ -23,6 +23,7 @@ import java.util.List;
 @Slf4j
 public class NettyMessageService {
     public void sendPush(PushTypeEnum pushType, Object data, String receiveUserUuid) {
+        log.info("sendPush");
         if (pushType == null || data == null || receiveUserUuid == null) {
             log.error("推送消息的类型、数据或接收用户UUID为空！");
             throw new ServiceException("用户" + receiveUserUuid + "的通道不可用或不活跃，推送消息失败。");
@@ -55,6 +56,7 @@ public class NettyMessageService {
     }
 
     public void sendMessageToUser(ReceiveMessageRequest message){
+        log.info("sendMessageToUser");
         switch (MessageRcvTypeEnum.fromCode(message.getType())){
             case TEXT_MESSAGE:
                 TextMessage textMessage = new TextMessage();

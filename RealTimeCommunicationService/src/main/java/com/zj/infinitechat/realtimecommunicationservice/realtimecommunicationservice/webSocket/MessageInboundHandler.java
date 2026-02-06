@@ -127,9 +127,9 @@ public class MessageInboundHandler extends SimpleChannelInboundHandler<TextWebSo
     //这个是当连接发生事件的时候调用如IdleStateEvent等等
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception{
+        log.info("第一个判断 ");
         if(evt instanceof IdleStateEvent){
             IdleStateEvent event = (IdleStateEvent) evt;
-
             switch (event.state()){
                 case READER_IDLE:
                     log.error("读空闲超时，关闭连接...{}, 用户ID{}",ctx.channel().remoteAddress(), ChannelManager.getUserByChannel(ctx.channel()));
@@ -142,7 +142,7 @@ public class MessageInboundHandler extends SimpleChannelInboundHandler<TextWebSo
             }
 
         }
-
+        log.info("第二个判断 ");
         if(evt instanceof WebSocketServerProtocolHandler.HandshakeComplete){
             String token = NettyUtils.getAttr(ctx.channel(), NettyUtils.TOKEN);
             String userUuid = NettyUtils.getAttr(ctx.channel(), NettyUtils.UID);
@@ -161,7 +161,9 @@ public class MessageInboundHandler extends SimpleChannelInboundHandler<TextWebSo
             }
 
             ChannelManager.addUserChannel(userUuid,ctx.channel());
+            log.info("写入userChannel{} channel是 {}" , userUuid , ctx.channel());
             ChannelManager.addChannelUser(userUuid, ctx.channel());
+            log.info("写入channelUser{} channel是 {}" , userUuid , ctx.channel());
 
             log.info("客户连接成功， 用户ID：{}",userUuid + "管道地址： " + ctx.channel().remoteAddress());
 

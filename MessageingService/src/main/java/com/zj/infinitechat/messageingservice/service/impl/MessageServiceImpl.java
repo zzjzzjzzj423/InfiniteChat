@@ -9,6 +9,7 @@ import com.zj.infinitechat.messageingservice.constants.ConfigEnum;
 import com.zj.infinitechat.messageingservice.constants.SessionType;
 import com.zj.infinitechat.messageingservice.constants.UserConstants;
 import com.zj.infinitechat.messageingservice.data.sendMsg.AppMessage;
+import com.zj.infinitechat.messageingservice.data.sendMsg.KafkaMsgVO;
 import com.zj.infinitechat.messageingservice.data.sendMsg.SendMsgRequest;
 import com.zj.infinitechat.messageingservice.data.sendMsg.SendMsgResponse;
 import com.zj.infinitechat.messageingservice.model.*;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 
@@ -58,6 +60,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
     private StringRedisTemplate stringRedisTemplate;
     private final DiscoveryClient discoveryClient;
     @Autowired
+    private  KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
     public MessageServiceImpl(FriendService friendService ,
                               UserService userService ,
                               SessionService sessionService,
@@ -89,8 +94,20 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message>
             throw new ServiceException("关系认证失败");
         }
         AppMessage appMessage = constructAppMessage(request);
+        sendToKafka(appMessage);
         transferMessage(request , appMessage);
+
         return toReponseVo(appMessage);
+    }
+
+
+    private void sendToKafka(AppMessage appMessage){
+        KafkaMsgVO kafkaMsgVO = new KafkaMsgVO();
+        BeanUtils.copyProperties(appMessage , kafkaMsgVO);
+        String kafkaJson = JSON.toJSONString(kafkaMsgVO);
+        kafkaTemplate.send(ConfigEnum.KAFKA_TOPICS.getValue() , String.valueOf(appMessage.getSessionId()), kafkaJson).addCallback(result -> log.info("Kafka消息发送成功: {}", result.getRecordMetadata()),
+                ex -> log.error("Kafka消息发送失败: {}", ex.getMessage()));
+
     }
 
 
