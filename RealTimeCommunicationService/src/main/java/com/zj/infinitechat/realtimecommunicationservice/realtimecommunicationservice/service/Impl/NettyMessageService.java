@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
 import com.zj.infinitechat.realtimecommunicationservice.realtimecommunicationservice.constants.MessageRcvTypeEnum;
 import com.zj.infinitechat.realtimecommunicationservice.realtimecommunicationservice.constants.PushTypeEnum;
+import com.zj.infinitechat.realtimecommunicationservice.realtimecommunicationservice.data.PushMomentRequest;
 import com.zj.infinitechat.realtimecommunicationservice.realtimecommunicationservice.data.ReceiveMessageRequest;
 import com.zj.infinitechat.realtimecommunicationservice.realtimecommunicationservice.exception.ServiceException;
 import com.zj.infinitechat.realtimecommunicationservice.realtimecommunicationservice.model.*;
@@ -89,5 +90,15 @@ public class NettyMessageService {
                 }
                 break;
         }
+    }
+
+
+    public void sendNotification(PushMomentRequest request){
+        for(Long receiverID : request.getReceiveUserIds()){
+            String id = String.valueOf(receiverID);
+            sendPush(PushTypeEnum.MOMENT_NOTIFICATION , request , id);
+        }
+
+
     }
 }
